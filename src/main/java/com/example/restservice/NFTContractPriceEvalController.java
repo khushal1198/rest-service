@@ -11,21 +11,30 @@ import org.json.JSONArray;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
 public class NFTContractPriceEvalController {
+
+    ArrayList<String> etherscanAPIs = new ArrayList<>(Arrays.asList(
+        "EIVSSQEKN35MWD5KAQ12BP6S298HF582GQ",
+        "VEE8T7JAVIKUEB3158PBZ77Z6BRMXEWCWZ",
+        "UR5ZPPD6W23D7RSS9SA37QRIQ9QGN2Z8AV",
+        "QIKA37R844CPB6NN11J63JP4TQ3Q2VRVBS",
+        "E68X9DTD13FUWTG9FIXEGZ1N4INZ4HRKRD",
+        "N2DR72B2BGW3XAQPR13S4PMMKQAJZ8PN1C"));
+    int apiCalls=0;
+
     @GetMapping("/nft")
-    public NFTContractPriceEval greeting(@RequestParam(value="contractAddress", defaultValue = "0xf42cdDB08BF80E8701f4b58C49789ddf031926e6")String contractAddress)  {
+    public String greeting(@RequestParam(value="contractAddress", defaultValue = "0xf42cdDB08BF80E8701f4b58C49789ddf031926e6")String contractAddress)  {
 
         int maxEvaluation = 30;
         int numberOfAPICallsPerSecond = 1;
         int numberOfTransferTransactions = 0;
 
         ArrayList<String> transactionHashes = getTransactionHashes(contractAddress);
-        System.out.println(transactionHashes);
-
-        System.out.println("Hi 3");
+        //System.out.println(transactionHashes);
 
         BigInteger total = new BigInteger("0");
 
@@ -62,9 +71,9 @@ public class NFTContractPriceEvalController {
         }
 
 
-
         BigInteger finalPrice = total.divide(new BigInteger(String.valueOf(numberOfTransferTransactions)));
-        return new NFTContractPriceEval(numberOfTransferTransactions,finalPrice.toString());
+        return finalPrice.toString();
+        //return new NFTContractPriceEval(numberOfTransferTransactions,finalPrice.toString());
     }
 
     @GetMapping("/tx")
@@ -72,7 +81,8 @@ public class NFTContractPriceEvalController {
     {
         ArrayList<String> values = new ArrayList<>();
         RestTemplate restTemplate = new RestTemplate();
-        String txString = "https://api-rinkeby.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash="+ transactionHash + "&apikey=VEE8T7JAVIKUEB3158PBZ77Z6BRMXEWCWZ";
+        String ethScanAPI = etherscanAPIs.get((apiCalls++)%(etherscanAPIs.size()));
+        String txString = "https://api-rinkeby.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash="+ transactionHash + "&apikey=" + ethScanAPI;
         BigInteger bigInt = null;
         String result = restTemplate.getForObject(txString
                 ,
@@ -96,13 +106,10 @@ public class NFTContractPriceEvalController {
     {
         ArrayList<String> transactionHashes = new ArrayList<>();
 
-        System.out.println("Hi Hi");
-
         RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject("https://api-rinkeby.etherscan.io/api?module=account&action=txlistinternal&address="+ contractAddress +"&startblock=0&endblock=99999999&sort=desc&apikey=VEE8T7JAVIKUEB3158PBZ77Z6BRMXEWCWZ",
+        String ethScanAPI = etherscanAPIs.get((apiCalls++)%(etherscanAPIs.size()));
+        String result = restTemplate.getForObject("https://api-rinkeby.etherscan.io/api?module=account&action=txlistinternal&address="+ contractAddress +"&startblock=0&endblock=99999999&sort=desc&apikey="  + ethScanAPI,
                 String.class);
-
-        System.out.println("Hi Hi1 ");
 
         try{
             JSONObject jsonRoot = new JSONObject(result);
@@ -123,7 +130,8 @@ public class NFTContractPriceEvalController {
     public BigInteger getValueFromTransaction(String transactionHash)
     {
         RestTemplate restTemplate = new RestTemplate();
-        String txString = "https://api-rinkeby.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash="+ transactionHash + "&apikey=UR5ZPPD6W23D7RSS9SA37QRIQ9QGN2Z8AV";
+        String ethScanAPI = etherscanAPIs.get((apiCalls++)%(etherscanAPIs.size()));
+        String txString = "https://api-rinkeby.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash="+ transactionHash + "&apikey=" + ethScanAPI;
         BigInteger bigInt = null;
         String result = restTemplate.getForObject(txString
                 ,
