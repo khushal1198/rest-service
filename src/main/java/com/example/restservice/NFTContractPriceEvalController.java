@@ -72,7 +72,7 @@ public class NFTContractPriceEvalController {
 
 
         BigInteger finalPrice = total.divide(new BigInteger(String.valueOf(numberOfTransferTransactions)));
-        return new NFTContractPriceEval(numberOfTransferTransactions,finalPrice.toString());
+        return new NFTContractPriceEval(numberOfTransferTransactions,finalPrice);
     }
 
     @GetMapping("/tx")
@@ -98,7 +98,7 @@ public class NFTContractPriceEvalController {
         }
 
         System.out.println(bigInt);
-        return new NFTContractPriceEval(5,"Hi");
+        return new NFTContractPriceEval(5,new BigInteger("0"));
     }
 
     public ArrayList<String> getTransactionHashes(String contractAddress)
