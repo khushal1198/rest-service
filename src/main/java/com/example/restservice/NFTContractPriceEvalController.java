@@ -27,7 +27,7 @@ public class NFTContractPriceEvalController {
     int apiCalls=0;
 
     @GetMapping("/nft")
-    public BigInteger greeting(@RequestParam(value="contractAddress", defaultValue = "0xf42cdDB08BF80E8701f4b58C49789ddf031926e6")String contractAddress)  {
+    public NFTContractPriceEval greeting(@RequestParam(value="contractAddress", defaultValue = "0xf42cdDB08BF80E8701f4b58C49789ddf031926e6")String contractAddress)  {
 
         int maxEvaluation = 30;
         int numberOfAPICallsPerSecond = 1;
@@ -72,8 +72,7 @@ public class NFTContractPriceEvalController {
 
 
         BigInteger finalPrice = total.divide(new BigInteger(String.valueOf(numberOfTransferTransactions)));
-        return finalPrice;
-        //return new NFTContractPriceEval(numberOfTransferTransactions,finalPrice.toString());
+        return new NFTContractPriceEval(numberOfTransferTransactions,finalPrice.toString());
     }
 
     @GetMapping("/tx")
