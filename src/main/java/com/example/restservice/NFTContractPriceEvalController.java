@@ -52,26 +52,24 @@ public class NFTContractPriceEvalController {
 
         tokenName = tokenName.toLowerCase();
         tokenName = tokenName.replaceAll(" ","-");
-
-
-        if(true)
-        {
-            return new NFTContractPricePolygon(tokenName,tokenName);
-        }
-
-        restTemplate = new RestTemplate();
-        String openSeaResult = restTemplate.getForObject("https://testnets-api.opensea.io/api/v1/collection/" + tokenName + "/stats",
-                String.class);
-
+        
         String numberOfNFT="";
         String averagePrice="";
 
         try{
+
+            restTemplate = new RestTemplate();
+            String openSeaResult = restTemplate.getForObject("https://testnets-api.opensea.io/api/v1/collection/" + tokenName + "/stats",
+                    String.class);
+
+
+
             JSONObject jsonRoot = new JSONObject(openSeaResult);
             //System.out.println(jsonRoot.getString("stats"));
             JSONObject res = new JSONObject(jsonRoot.getString("stats"));
             numberOfNFT = res.getString("total_sales");
             averagePrice = res.getString("average_price");
+
         }catch (Exception e)
         {
             return new NFTContractPricePolygon(e.toString(), e.toString());
