@@ -67,10 +67,9 @@ public class NFTContractPriceEvalController {
             averagePrice = res.getString("average_price");
         }catch (Exception e)
         {
-            System.out.println(e);
+            return new NFTContractPricePolygon(e.toString(), e.toString());
         }
 
-        System.out.println(openSeaResult);
 
         return new NFTContractPricePolygon(numberOfNFT,averagePrice);
     }
