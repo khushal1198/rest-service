@@ -53,6 +53,7 @@ public class NFTContractPriceEvalController {
         tokenName = tokenName.toLowerCase();
         tokenName = tokenName.replaceAll(" ","-");
 
+        restTemplate = new RestTemplate();
         String openSeaResult = restTemplate.getForObject("https://testnets-api.opensea.io/api/v1/collection/" + tokenName + "/stats",
                 String.class);
 
