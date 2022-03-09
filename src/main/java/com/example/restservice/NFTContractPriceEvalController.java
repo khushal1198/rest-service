@@ -71,7 +71,7 @@ public class NFTContractPriceEvalController {
         }
 
         System.out.println(openSeaResult);
-        
+
         return new NFTContractPricePolygon(numberOfNFT,averagePrice);
     }
 
