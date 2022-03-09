@@ -2,6 +2,9 @@ package com.example.restservice;
 
 import org.apache.tomcat.util.json.JSONParser;
 import org.json.JSONException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,15 +55,21 @@ public class NFTContractPriceEvalController {
 
         tokenName = tokenName.toLowerCase();
         tokenName = tokenName.replaceAll(" ","-");
-        
+
         String numberOfNFT="";
         String averagePrice="";
 
         try{
 
             restTemplate = new RestTemplate();
-            String openSeaResult = restTemplate.getForObject("https://testnets-api.opensea.io/api/v1/collection/" + tokenName + "/stats",
-                    String.class);
+            //String openSeaResult = restTemplate.getForObject("https://testnets-api.opensea.io/api/v1/collection/" + tokenName + "/stats", String.class);
+
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("user-agent", "Application");
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            String openSeaResult = restTemplate.exchange("https://testnets-api.opensea.io/api/v1/collection/" + tokenName + "/stats", HttpMethod.GET, entity, String.class).getBody();
+            //System.out.println(openSeaResult);
 
 
 
