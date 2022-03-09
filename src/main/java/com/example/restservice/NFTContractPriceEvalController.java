@@ -18,13 +18,63 @@ import java.util.concurrent.atomic.AtomicLong;
 public class NFTContractPriceEvalController {
 
     ArrayList<String> etherscanAPIs = new ArrayList<>(Arrays.asList(
-        "EIVSSQEKN35MWD5KAQ12BP6S298HF582GQ",
-        "VEE8T7JAVIKUEB3158PBZ77Z6BRMXEWCWZ",
-        "UR5ZPPD6W23D7RSS9SA37QRIQ9QGN2Z8AV",
-        "QIKA37R844CPB6NN11J63JP4TQ3Q2VRVBS",
-        "E68X9DTD13FUWTG9FIXEGZ1N4INZ4HRKRD",
-        "N2DR72B2BGW3XAQPR13S4PMMKQAJZ8PN1C"));
+            "EIVSSQEKN35MWD5KAQ12BP6S298HF582GQ",
+            "VEE8T7JAVIKUEB3158PBZ77Z6BRMXEWCWZ",
+            "UR5ZPPD6W23D7RSS9SA37QRIQ9QGN2Z8AV",
+            "QIKA37R844CPB6NN11J63JP4TQ3Q2VRVBS",
+            "E68X9DTD13FUWTG9FIXEGZ1N4INZ4HRKRD",
+            "N2DR72B2BGW3XAQPR13S4PMMKQAJZ8PN1C"));
     int apiCalls=0;
+
+    ArrayList<String> polygonMumbaiScanAPIs = new ArrayList<>(Arrays.asList(
+            "A8PSCMARIK7ZGWJVUH8F1AW9DE4RA2E2WW"));
+
+
+    @GetMapping("/polygon")
+    public NFTContractPricePolygon polygonMumbai(@RequestParam(value="contractAddress", defaultValue = "0xa4c186cc72dd4eabc8390bbadc787ee20c6c18ce")String contractAddress){
+
+
+        String tokenName="";
+        RestTemplate restTemplate = new RestTemplate();
+        String mumbaiScanAPI = polygonMumbaiScanAPIs.get((apiCalls++)%(polygonMumbaiScanAPIs.size()));
+        String result = restTemplate.getForObject("https://mumbai.polygonscan.com/api?module=token&action=tokeninfo&contractaddress="+ contractAddress +"&apikey="  + mumbaiScanAPI,
+                String.class);
+
+        try{
+            JSONObject jsonRoot = new JSONObject(result);
+            JSONArray array = new JSONArray(jsonRoot.getString("result"));
+            JSONObject object = array.getJSONObject(0);
+            tokenName = object.getString("tokenName");
+        }catch (Exception e)
+        {
+            System.out.println(e);
+        }
+
+        tokenName = tokenName.toLowerCase();
+        tokenName = tokenName.replaceAll(" ","-");
+
+        String openSeaResult = restTemplate.getForObject("https://testnets-api.opensea.io/api/v1/collection/" + tokenName + "/stats",
+                String.class);
+
+        String numberOfNFT="";
+        String averagePrice="";
+
+        try{
+            JSONObject jsonRoot = new JSONObject(openSeaResult);
+            //System.out.println(jsonRoot.getString("stats"));
+            JSONObject res = new JSONObject(jsonRoot.getString("stats"));
+            numberOfNFT = res.getString("total_sales");
+            averagePrice = res.getString("average_price");
+        }catch (Exception e)
+        {
+            System.out.println(e);
+        }
+
+        System.out.println(openSeaResult);
+        
+        return new NFTContractPricePolygon(numberOfNFT,averagePrice);
+    }
+
 
     @GetMapping("/nft")
     public NFTContractPriceEval greeting(@RequestParam(value="contractAddress", defaultValue = "0xf42cdDB08BF80E8701f4b58C49789ddf031926e6")String contractAddress)  {
