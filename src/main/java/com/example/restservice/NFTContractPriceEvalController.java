@@ -59,6 +59,10 @@ public class NFTContractPriceEvalController {
         String numberOfNFT="";
         String averagePrice="";
 
+        BigInteger numNFT;
+        BigInteger avgPrice;
+
+
         try{
 
             restTemplate = new RestTemplate();
@@ -78,14 +82,21 @@ public class NFTContractPriceEvalController {
             JSONObject res = new JSONObject(jsonRoot.getString("stats"));
             numberOfNFT = res.getString("total_sales");
             averagePrice = res.getString("average_price");
+            System.out.println(averagePrice);
+            averagePrice = averagePrice.replaceAll("\\.","");
+            System.out.println(averagePrice);
+            numNFT = new BigInteger(numberOfNFT);
+            avgPrice = new BigInteger(averagePrice);
+
 
         }catch (Exception e)
         {
-            return new NFTContractPricePolygon(e.toString(), e.toString());
+            System.out.println(e);
+            return new NFTContractPricePolygon(new BigInteger("0"), new BigInteger("0"));
         }
 
 
-        return new NFTContractPricePolygon(numberOfNFT,averagePrice);
+        return new NFTContractPricePolygon(numNFT,avgPrice);
     }
 
 

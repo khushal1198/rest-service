@@ -1,28 +1,31 @@
 package com.example.restservice;
 
-public class NFTContractPricePolygon {
-    private String number;
+import java.math.BigInteger;
 
-    public String getNumber() {
+public class NFTContractPricePolygon {
+    private BigInteger number;
+    private BigInteger price;
+
+    public BigInteger getNumber() {
         return number;
     }
 
-    public void setNumber(String number) {
+    public void setNumber(BigInteger number) {
         this.number = number;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(BigInteger price) {
         this.price = price;
     }
 
-    public String getPrice() {
+    public BigInteger getPrice() {
         return price;
     }
 
-    public NFTContractPricePolygon(String number, String price) {
+    public NFTContractPricePolygon(BigInteger number, BigInteger price) {
         this.number = number;
         this.price = price;
     }
 
-    private String price;
+
 }
